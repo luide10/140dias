@@ -583,12 +583,25 @@
             renderizar();
         }
 
+        // Função ajustada para criar sequencias cíclicas em vez de random
         function criarDadosPadrao() {
             dadosDesafio = [];
-            const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-            for(let i=0; i<50; i++) dadosDesafio.push({ valor: randomInt(1, 30), tipo: 'facil', pago: false });
-            for(let i=0; i<50; i++) dadosDesafio.push({ valor: randomInt(31, 48), tipo: 'medio', pago: false });
-            for(let i=0; i<40; i++) dadosDesafio.push({ valor: randomInt(49, 71), tipo: 'dificil', pago: false });
+            
+            // Função auxiliar para preencher sequencialmente
+            const preencherCiclo = (min, max, quantidade, tipo) => {
+                let atual = min;
+                for(let i=0; i < quantidade; i++) {
+                    dadosDesafio.push({ valor: atual, tipo: tipo, pago: false });
+                    atual++;
+                    // Se passou do máximo, volta pro mínimo (efeito ciclo)
+                    if(atual > max) atual = min;
+                }
+            };
+
+            // Gera as sequências (ex: 1, 2, 3... 30, 1, 2...)
+            preencherCiclo(1, 30, 50, 'facil');
+            preencherCiclo(31, 48, 50, 'medio');
+            preencherCiclo(49, 71, 40, 'dificil');
         }
 
         function salvarProgresso() {
@@ -618,8 +631,9 @@
 
                 const itensComIndex = dadosDesafio
                     .map((item, index) => ({ ...item, originalIndex: index }))
-                    .filter(item => item.tipo === grupo.id)
-                    .sort((a, b) => a.valor - b.valor);
+                    .filter(item => item.tipo === grupo.id);
+                    // REMOVIDO: .sort((a, b) => a.valor - b.valor); 
+                    // Isso garante que apareça na ordem de criação (sequencial)
 
                 itensComIndex.forEach(item => {
                     const card = document.createElement('div');
