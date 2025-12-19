@@ -10,15 +10,14 @@
     <meta name="apple-mobile-web-app-title" content="Desafio 140">
 
     <!-- PWA: Configurações para Android (Manifesto Embutido) -->
-    <!-- Esse código abaixo força o modo Tela Cheia (Standalone) no Android -->
     <link rel="manifest" href='data:application/manifest+json,{
         "name": "Desafio 140 Dias",
         "short_name": "Desafio 5k",
         "start_url": ".",
         "display": "standalone",
         "orientation": "portrait",
-        "background_color": "#f4f6f8",
-        "theme_color": "#27ae60",
+        "background_color": "#e8f5e9",
+        "theme_color": "#00c853",
         "icons": [{
             "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png",
             "sizes": "512x512",
@@ -26,26 +25,33 @@
         }]
     }'>
 
-    <meta name="theme-color" content="#27ae60">
+    <meta name="theme-color" content="#00c853">
 
-    <title>Desafio 140 Dias - Online</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Desafio 5k - Premium</title>
+    <!-- Fonte Moderna -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- ESTILO VISUAL (CSS) --- */
+        /* --- DESIGN SYSTEM MODERNO (CSS) --- */
         :root {
-            --facil-bg: #e8f5e9; --facil-border: #81c784; --facil-text: #2e7d32;
-            --medio-bg: #e3f2fd; --medio-border: #64b5f6; --medio-text: #1565c0;
-            --dificil-bg: #f3e5f5; --dificil-border: #ba68c8; --dificil-text: #6a1b9a;
-            --pago-bg: #e53935; --pago-border: #b71c1c;
-            --primary: #27ae60;
-            --secondary: #2196f3;
-            --bg: #f4f6f8;
-            --error-bg: #ffebee; --error-text: #c62828;
+            /* Paleta de Cores Vibrante */
+            --primary-gradient: linear-gradient(135deg, #00c853 0%, #64dd17 100%);
+            --bg-gradient: linear-gradient(180deg, #e8f5e9 0%, #ffffff 100%);
+            --card-shadow: 0 10px 30px -10px rgba(0, 100, 0, 0.15);
+            --text-main: #1b5e20;
+            --text-sec: #4caf50;
+            
+            /* Status Colors */
+            --facil: #a5d6a7;
+            --medio: #90caf9;
+            --dificil: #ce93d8;
+            
+            --pago-gradient: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%);
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg);
+            font-family: 'Outfit', sans-serif; /* Fonte mais arredondada e moderna */
+            background: var(--bg-gradient);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -53,243 +59,344 @@
             margin: 0;
             color: #333;
             min-height: 100vh;
-            /* Evita seleção de texto indesejada parecendo app */
             -webkit-user-select: none;
             user-select: none;
+            overflow-x: hidden;
         }
 
         /* Permite selecionar texto nos inputs */
         input { user-select: text; -webkit-user-select: text; }
 
-        /* TELA DE ERRO AMIGÁVEL */
-        #error-box {
-            display: none;
-            background-color: var(--error-bg);
-            color: var(--error-text);
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid var(--error-text);
+        /* HEADER ANIMADO */
+        .app-header {
+            text-align: center;
             margin-bottom: 20px;
-            max-width: 500px;
-            text-align: left;
-            line-height: 1.6;
+            animation: fadeInDown 0.8s ease;
         }
-        #error-box h3 { margin-top: 0; }
-        #error-box code { background: rgba(255,255,255,0.5); padding: 2px 5px; border-radius: 4px; font-weight: bold; }
 
-        /* CARD CENTRALIZADO */
-        .centro-tela {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg);
-            z-index: 2000;
+        h1 { 
+            color: var(--text-main); 
+            margin: 5px 0; 
+            font-size: 1.8rem; 
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-sec);
+            font-weight: 500;
+        }
+
+        /* CARD DE PLACAR FLUTUANTE */
+        .placar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px); /* Efeito de vidro */
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+            position: sticky;
+            top: 15px;
+            z-index: 100;
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .valor-total { 
+            font-size: 3em; 
+            font-weight: 800; 
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; /* Texto com gradiente */
+            margin: 5px 0 15px 0;
+            letter-spacing: -1px;
+        }
+
+        /* BARRA DE PROGRESSO ESTILOSA */
+        .progress-bar-container { 
+            width: 100%; 
+            height: 14px; 
+            background-color: #f1f8e9; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            margin-bottom: 10px; 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .progress-bar-fill { 
+            height: 100%; 
+            background: var(--primary-gradient); 
+            width: 0%; 
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 20px;
+            /* Efeito listrado animado */
+            background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+            background-size: 1rem 1rem;
+            animation: progress-stripe 1s linear infinite;
+        }
+
+        @keyframes progress-stripe {
+            0% { background-position: 1rem 0; }
+            100% { background-position: 0 0; }
+        }
+
+        /* GRID MODERNIZADO */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-width: 900px;
+            padding-bottom: 80px;
+        }
+
+        .section-title {
+            grid-column: 1 / -1;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #555;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: #e0e0e0;
+            border-radius: 2px;
+        }
+
+        /* CARDS DE VALOR (CHIPS) */
+        .card {
+            background-color: white;
+            border-radius: 18px;
+            padding: 18px 5px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efeito elástico */
+            font-weight: 700;
+            font-size: 1.1em;
+            color: #555;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+        .card:active { transform: scale(0.95); }
+
+        /* CORES SUAVES PARA NÃO PAGOS */
+        .facil { background-color: #f1f8e9; color: #33691e; }
+        .medio { background-color: #e3f2fd; color: #0d47a1; }
+        .dificil { background-color: #f3e5f5; color: #4a148c; }
+
+        /* ESTADO PAGO (VERMELHO GRADIENTE) */
+        .card.pago {
+            background: var(--pago-gradient) !important;
+            color: white !important;
+            box-shadow: 0 5px 15px rgba(211, 47, 47, 0.4);
+            border: none;
+            text-decoration: line-through;
+            opacity: 0.9;
+            transform: scale(0.95);
+        }
+        
+        /* TELA DE LOGIN ESTILIZADA */
+        .centro-tela {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-gradient);
+            z-index: 2000;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
             padding: 20px;
         }
 
         .card-branco {
             background: white;
             padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
             text-align: center;
-            max-width: 400px;
+            max-width: 380px;
             width: 100%;
+            position: relative;
+        }
+        
+        /* Icone do cofre no login */
+        .login-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
         }
 
         .input-texto {
-            width: 80%;
-            padding: 15px;
-            margin: 10px 0;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 1.1em;
+            width: 85%;
+            padding: 16px;
+            margin: 12px 0;
+            border: 2px solid #f0f0f0;
+            border-radius: 16px;
+            font-size: 1rem;
             text-align: center;
             outline: none;
-            transition: border 0.3s;
+            transition: all 0.3s;
+            background: #fafafa;
+            font-family: inherit;
         }
-        .input-texto:focus { border-color: var(--primary); }
+        .input-texto:focus { 
+            border-color: #00c853; 
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0, 200, 83, 0.1);
+        }
 
-        /* BOTOES */
-        .btn-row {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            margin-top: 15px;
-            justify-content: center;
-        }
+        /* BOTÕES MODERNOS */
+        .btn-row { display: flex; gap: 15px; width: 100%; margin-top: 20px; justify-content: center; }
 
         .btn-base {
-            padding: 15px 0;
+            padding: 16px 0;
             font-size: 1em;
-            border-radius: 50px;
+            border-radius: 16px;
             cursor: pointer;
-            font-weight: 600;
-            transition: transform 0.2s, background 0.2s;
-            flex: 1; /* Ocupa metade cada */
-            border: none;
+            font-weight: 700;
+            transition: transform 0.2s, box-shadow 0.2s;
+            flex: 1; border: none;
+            font-family: inherit;
         }
-        .btn-base:hover { transform: scale(1.02); }
-
+        
         .btn-entrar {
-            background-color: var(--primary);
+            background: var(--primary-gradient);
             color: white;
+            box-shadow: 0 4px 15px rgba(0, 200, 83, 0.3);
         }
-        .btn-entrar:hover { background-color: #219150; }
+        .btn-entrar:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 200, 83, 0.4); }
 
         .btn-cadastrar {
-            background-color: transparent;
-            color: var(--secondary);
-            border: 2px solid var(--secondary);
+            background: white;
+            color: #2196f3;
+            border: 2px solid #e3f2fd;
         }
-        .btn-cadastrar:hover { background-color: #e3f2fd; }
+        .btn-cadastrar:hover { background: #e3f2fd; }
 
         .btn-secundario {
-            background: none;
-            border: none;
-            color: #777;
-            text-decoration: underline;
-            cursor: pointer;
-            margin-top: 20px;
-            font-size: 0.9em;
+            background: none; border: none; color: #999;
+            text-decoration: none; font-weight: 600; font-size: 0.9em;
+            margin-top: 30px; cursor: pointer;
+            padding: 10px 20px; border-radius: 50px;
+            transition: background 0.2s;
         }
+        .btn-secundario:hover { background: #f0f0f0; color: #555; }
 
-        /* DASHBOARD */
-        #dashboard-screen {
+        /* LOADING ANIMADO */
+        .loading-spinner {
+            width: 40px; height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #00c853;
+            border-radius: 50%;
+            margin: 20px auto;
+            animation: spin 1s linear infinite;
             display: none;
-            width: 100%;
-            flex-direction: column;
-            align-items: center;
+        }
+        
+        /* User Badge */
+        .user-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            display: inline-block;
         }
 
-        h1 { color: #2c3e50; margin: 10px 0 5px 0; text-align: center; }
-        .user-badge { background: #e0e0e0; padding: 5px 15px; border-radius: 20px; font-size: 0.8em; color: #555; margin-bottom: 20px; }
-
-        .placar {
-            background: white;
+        /* ERRO */
+        #error-box {
+            display: none;
+            background-color: #ffebee;
+            color: #c62828;
             padding: 20px;
             border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-            text-align: center;
-            width: 100%;
+            border: none;
+            margin-bottom: 20px;
             max-width: 500px;
-            position: sticky;
-            top: 10px;
-            z-index: 100;
-            border: 1px solid #eee;
+            text-align: left;
+            line-height: 1.6;
+            box-shadow: 0 5px 15px rgba(198, 40, 40, 0.1);
         }
 
-        .valor-total { font-size: 2.5em; font-weight: 600; color: var(--primary); margin: 10px 0; }
-        .progress-bar-container { width: 100%; height: 10px; background-color: #eee; border-radius: 5px; overflow: hidden; margin-bottom: 10px; }
-        .progress-bar-fill { height: 100%; background-color: var(--primary); width: 0%; transition: width 0.5s ease; }
-        
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
-            gap: 12px;
-            width: 100%;
-            max-width: 900px;
-            padding-bottom: 60px;
-        }
-
-        .section-title {
-            grid-column: 1 / -1;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #555;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 5px;
-        }
-
-        .card {
-            background-color: white;
-            border-radius: 12px;
-            padding: 15px 5px;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: all 0.2s;
-            font-weight: 600;
-            border: 2px solid transparent;
-            user-select: none;
-        }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        
-        .card.pago {
-            background-color: var(--pago-bg) !important;
-            color: white !important;
-            border-color: var(--pago-border) !important;
-            text-decoration: line-through;
-            opacity: 0.9;
-        }
-
-        .facil { border-color: var(--facil-border); color: var(--facil-text); background-color: var(--facil-bg); }
-        .medio { border-color: var(--medio-border); color: var(--medio-text); background-color: var(--medio-bg); }
-        .dificil { border-color: var(--dificil-border); color: var(--dificil-text); background-color: var(--dificil-bg); }
-
-        .loading-spinner {
-            border: 4px solid #f3f3f3; border-top: 4px solid var(--primary);
-            border-radius: 50%; width: 30px; height: 30px;
-            animation: spin 1s linear infinite; margin: 20px auto;
-            display: none;
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* Ajustes Mobile */
+        @media (max-width: 480px) {
+            .valor-total { font-size: 2.5em; }
+            .card { padding: 15px 5px; font-size: 1em; }
+        }
     </style>
 </head>
 <body>
 
     <!-- CAIXA DE AJUDA PARA ERROS -->
     <div id="error-box">
-        <h3>⚠️ Ops! Precisamos ajustar o Firebase</h3>
+        <h3>⚠️ Atenção</h3>
         <p id="error-message">Erro desconhecido.</p>
-        <p>Siga o passo a passo que o assistente te enviou para corrigir.</p>
     </div>
 
     <!-- TELA 1: LOGIN / PERFIL -->
     <div id="login-screen" class="centro-tela">
         <div class="card-branco">
-            <h2 style="color: var(--primary)">Desafio 140 Dias</h2>
-            <p>Faça login ou crie sua conta.</p>
+            <span class="login-icon">🐷</span>
+            <h2 style="color: #333; margin-top: 0;">Bora Economizar?</h2>
+            <p style="color: #666; font-size: 0.95em;">Acesse seu cofre virtual.</p>
             
-            <input type="text" id="profileInput" class="input-texto" placeholder="Nome do Usuário" autocomplete="off">
-            <input type="password" id="passwordInput" class="input-texto" placeholder="Senha" autocomplete="off">
+            <input type="text" id="profileInput" class="input-texto" placeholder="Seu Usuário" autocomplete="off">
+            <input type="password" id="passwordInput" class="input-texto" placeholder="Sua Senha" autocomplete="off">
             
             <div id="loading" class="loading-spinner"></div>
             
             <div id="btnContainer" class="btn-row">
                 <button class="btn-base btn-entrar" onclick="fazerLogin()">Entrar</button>
-                <button class="btn-base btn-cadastrar" onclick="criarConta()">Cadastrar</button>
+                <button class="btn-base btn-cadastrar" onclick="criarConta()">Criar</button>
             </div>
             
-            <p style="font-size:0.8em; color:#999; margin-top:20px">Conectado ao Firebase: dias-e3c5a</p>
+            <p style="font-size:0.75em; color:#bbb; margin-top:25px; margin-bottom: 0;">Sincronizado na nuvem ☁️</p>
         </div>
     </div>
 
     <!-- TELA 2: DASHBOARD -->
     <div id="dashboard-screen" style="display: none;">
-        <h1>Meta: R$ 5.000,00+</h1>
-        <div class="user-badge" id="userBadge">Perfil: ...</div>
+        
+        <div class="app-header">
+            <h1>Desafio 5k</h1>
+            <p class="subtitle">Guarde um pouco todo dia ✨</p>
+        </div>
+
+        <div class="user-badge" id="userBadge">Olá, ...</div>
         
         <div class="placar">
-            <div>Total Guardado</div>
+            <div style="font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 700;">Você já guardou</div>
             <div class="valor-total" id="displayTotal">R$ 0,00</div>
             
             <div class="progress-bar-container">
                 <div class="progress-bar-fill" id="barraProgresso"></div>
             </div>
-            <div id="progressoTexto" style="font-size: 0.9em; color: #777;">Carregando...</div>
+            <div id="progressoTexto" style="font-size: 0.9em; color: #666; font-weight: 600;">Carregando...</div>
         </div>
 
         <div class="grid-container" id="grid"></div>
 
-        <button class="btn-secundario" onclick="sairPerfil()" style="margin-bottom: 40px;">Sair / Trocar Perfil</button>
+        <button class="btn-secundario" onclick="sairPerfil()">Sair / Trocar Conta</button>
     </div>
 
     <script type="module">
@@ -330,8 +437,10 @@
         function mostrarErro(mensagem) {
             errorBox.style.display = 'block';
             document.getElementById('error-message').innerHTML = mensagem;
-            loginScreen.style.position = 'relative'; 
-            loginScreen.style.zIndex = '1';
+            // Se der erro, garante que a tela de login fique visível
+            loginScreen.style.zIndex = '3000';
+            loading.style.display = 'none';
+            btnContainer.style.display = 'flex';
         }
 
         function alternarLoading(ativar) {
@@ -345,7 +454,6 @@
             }
         }
 
-        // --- FUNÇÃO 1: FAZER LOGIN ---
         window.fazerLogin = async function() {
             const nomeInput = document.getElementById('profileInput').value.trim().toLowerCase();
             const senhaInput = document.getElementById('passwordInput').value.trim();
@@ -359,8 +467,6 @@
             try {
                 await signInAnonymously(auth);
                 const docRef = doc(db, 'perfis', perfilAtual);
-                
-                // Verifica se existe ANTES de logar
                 const docSnap = await getDoc(docRef);
 
                 if (!docSnap.exists()) {
@@ -376,7 +482,6 @@
                     return;
                 }
 
-                // Se passou, inicia o app
                 iniciarApp(docRef);
 
             } catch (error) {
@@ -385,7 +490,6 @@
             }
         };
 
-        // --- FUNÇÃO 2: CRIAR CONTA ---
         window.criarConta = async function() {
             const nomeInput = document.getElementById('profileInput').value.trim().toLowerCase();
             const senhaInput = document.getElementById('passwordInput').value.trim();
@@ -400,8 +504,6 @@
             try {
                 await signInAnonymously(auth);
                 const docRef = doc(db, 'perfis', perfilAtual);
-                
-                // Verifica se JÁ existe
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
@@ -410,7 +512,6 @@
                     return;
                 }
 
-                // Cria novo perfil
                 criarDadosPadrao();
                 await setDoc(docRef, { 
                     items: dadosDesafio, 
@@ -418,7 +519,6 @@
                     criadoEm: new Date().toISOString() 
                 });
 
-                // Inicia o app
                 iniciarApp(docRef);
 
             } catch (error) {
@@ -428,7 +528,6 @@
         };
 
         function iniciarApp(docRef) {
-            // Escuta mudanças em tempo real (para manter sincronizado)
             unsubscribe = onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists()) {
                     dadosDesafio = docSnap.data().items || [];
@@ -442,11 +541,11 @@
         function tratarErroGeral(error) {
             alternarLoading(false);
             if(error.code === 'permission-denied') {
-                mostrarErro(`<strong>ACESSO NEGADO:</strong> Banco bloqueado. Libere nas Regras do Firebase.`);
+                mostrarErro(`<strong>ACESSO NEGADO:</strong> Banco bloqueado. Vá no console do Firebase > Firestore > Regras e mude para 'true'.`);
             } else if(error.code === 'auth/operation-not-allowed') {
                 mostrarErro(`<strong>LOGIN BLOQUEADO:</strong> Ative o login Anônimo no Firebase.`);
             } else if(error.code === 'auth/unauthorized-domain') {
-                mostrarErro(`<strong>DOMÍNIO BLOQUEADO:</strong> Adicione 127.0.0.1 nos domínios do Firebase.`);
+                mostrarErro(`<strong>DOMÍNIO BLOQUEADO:</strong> Adicione o domínio atual no Firebase Authentication.`);
             } else {
                 mostrarErro("Erro: " + error.code);
             }
@@ -455,7 +554,9 @@
         function abrirDashboard() {
             loginScreen.style.display = 'none';
             dashboardScreen.style.display = 'flex'; 
-            document.getElementById('userBadge').textContent = `Perfil: ${perfilAtual}`;
+            // Capitalizar primeira letra do nome
+            const nomeFormatado = perfilAtual.charAt(0).toUpperCase() + perfilAtual.slice(1);
+            document.getElementById('userBadge').textContent = `👋 Olá, ${nomeFormatado}`;
             renderizar();
         }
 
@@ -481,9 +582,9 @@
             const totalDias = 140;
 
             const grupos = [
-                { id: 'facil', titulo: '🟢 Dias Fáceis (R$ 1 - 30)' },
-                { id: 'medio', titulo: '🔵 Dias Médios (R$ 31 - 48)' },
-                { id: 'dificil', titulo: '🟣 Dias Difíceis (R$ 49 - 71)' }
+                { id: 'facil', titulo: '🟢 Nível Iniciante (R$ 1-30)' },
+                { id: 'medio', titulo: '🔵 Nível Intermediário (R$ 31-48)' },
+                { id: 'dificil', titulo: '🟣 Nível Hard (R$ 49-71)' }
             ];
 
             grupos.forEach(grupo => {
@@ -520,7 +621,7 @@
             
             const pct = (diasPagos / totalDias) * 100;
             document.getElementById('barraProgresso').style.width = `${pct}%`;
-            document.getElementById('progressoTexto').textContent = `${diasPagos} / ${totalDias} dias pagos`;
+            document.getElementById('progressoTexto').textContent = `${diasPagos} de ${totalDias} dias concluídos (${Math.round(pct)}%)`;
         }
 
         window.sairPerfil = function() {
