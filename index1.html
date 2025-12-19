@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- PWA: Configurações para iOS (iPhone) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Desafio 140">
+
+    <!-- PWA: Configurações para Android (Manifesto Embutido) -->
+    <!-- Esse código abaixo força o modo Tela Cheia (Standalone) no Android -->
+    <link rel="manifest" href='data:application/manifest+json,{
+        "name": "Desafio 140 Dias",
+        "short_name": "Desafio 5k",
+        "start_url": ".",
+        "display": "standalone",
+        "orientation": "portrait",
+        "background_color": "#f4f6f8",
+        "theme_color": "#27ae60",
+        "icons": [{
+            "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }]
+    }'>
+
+    <meta name="theme-color" content="#27ae60">
+
+    <title>Desafio 140 Dias - Online</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILO VISUAL (CSS) --- */
+        :root {
+            --facil-bg: #e8f5e9; --facil-border: #81c784; --facil-text: #2e7d32;
+            --medio-bg: #e3f2fd; --medio-border: #64b5f6; --medio-text: #1565c0;
+            --dificil-bg: #f3e5f5; --dificil-border: #ba68c8; --dificil-text: #6a1b9a;
+            --pago-bg: #e53935; --pago-border: #b71c1c;
+            --primary: #27ae60;
+            --secondary: #2196f3;
+            --bg: #f4f6f8;
+            --error-bg: #ffebee; --error-text: #c62828;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            color: #333;
+            min-height: 100vh;
+            /* Evita seleção de texto indesejada parecendo app */
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Permite selecionar texto nos inputs */
+        input { user-select: text; -webkit-user-select: text; }
+
+        /* TELA DE ERRO AMIGÁVEL */
+        #error-box {
+            display: none;
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid var(--error-text);
+            margin-bottom: 20px;
+            max-width: 500px;
+            text-align: left;
+            line-height: 1.6;
+        }
+        #error-box h3 { margin-top: 0; }
+        #error-box code { background: rgba(255,255,255,0.5); padding: 2px 5px; border-radius: 4px; font-weight: bold; }
+
+        /* CARD CENTRALIZADO */
+        .centro-tela {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card-branco {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .input-texto {
+            width: 80%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1em;
+            text-align: center;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .input-texto:focus { border-color: var(--primary); }
+
+        /* BOTOES */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .btn-base {
+            padding: 15px 0;
+            font-size: 1em;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, background 0.2s;
+            flex: 1; /* Ocupa metade cada */
+            border: none;
+        }
+        .btn-base:hover { transform: scale(1.02); }
+
+        .btn-entrar {
+            background-color: var(--primary);
+            color: white;
+        }
+        .btn-entrar:hover { background-color: #219150; }
+
+        .btn-cadastrar {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 2px solid var(--secondary);
+        }
+        .btn-cadastrar:hover { background-color: #e3f2fd; }
+
+        .btn-secundario {
+            background: none;
+            border: none;
+            color: #777;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+
+        /* DASHBOARD */
+        #dashboard-screen {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 { color: #2c3e50; margin: 10px 0 5px 0; text-align: center; }
+        .user-badge { background: #e0e0e0; padding: 5px 15px; border-radius: 20px; font-size: 0.8em; color: #555; margin-bottom: 20px; }
+
+        .placar {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            border: 1px solid #eee;
+        }
+
+        .valor-total { font-size: 2.5em; font-weight: 600; color: var(--primary); margin: 10px 0; }
+        .progress-bar-container { width: 100%; height: 10px; background-color: #eee; border-radius: 5px; overflow: hidden; margin-bottom: 10px; }
+        .progress-bar-fill { height: 100%; background-color: var(--primary); width: 0%; transition: width 0.5s ease; }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+            gap: 12px;
+            width: 100%;
+            max-width: 900px;
+            padding-bottom: 60px;
+        }
+
+        .section-title {
+            grid-column: 1 / -1;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 15px 5px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+            font-weight: 600;
+            border: 2px solid transparent;
+            user-select: none;
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        .card.pago {
+            background-color: var(--pago-bg) !important;
+            color: white !important;
+            border-color: var(--pago-border) !important;
+            text-decoration: line-through;
+            opacity: 0.9;
+        }
+
+        .facil { border-color: var(--facil-border); color: var(--facil-text); background-color: var(--facil-bg); }
+        .medio { border-color: var(--medio-border); color: var(--medio-text); background-color: var(--medio-bg); }
+        .dificil { border-color: var(--dificil-border); color: var(--dificil-text); background-color: var(--dificil-bg); }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3; border-top: 4px solid var(--primary);
+            border-radius: 50%; width: 30px; height: 30px;
+            animation: spin 1s linear infinite; margin: 20px auto;
+            display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- CAIXA DE AJUDA PARA ERROS -->
+    <div id="error-box">
+        <h3>⚠️ Ops! Precisamos ajustar o Firebase</h3>
+        <p id="error-message">Erro desconhecido.</p>
+        <p>Siga o passo a passo que o assistente te enviou para corrigir.</p>
+    </div>
+
+    <!-- TELA 1: LOGIN / PERFIL -->
+    <div id="login-screen" class="centro-tela">
+        <div class="card-branco">
+            <h2 style="color: var(--primary)">Desafio 140 Dias</h2>
+            <p>Faça login ou crie sua conta.</p>
+            
+            <input type="text" id="profileInput" class="input-texto" placeholder="Nome do Usuário" autocomplete="off">
+            <input type="password" id="passwordInput" class="input-texto" placeholder="Senha" autocomplete="off">
+            
+            <div id="loading" class="loading-spinner"></div>
+            
+            <div id="btnContainer" class="btn-row">
+                <button class="btn-base btn-entrar" onclick="fazerLogin()">Entrar</button>
+                <button class="btn-base btn-cadastrar" onclick="criarConta()">Cadastrar</button>
+            </div>
+            
+            <p style="font-size:0.8em; color:#999; margin-top:20px">Conectado ao Firebase: dias-e3c5a</p>
+        </div>
+    </div>
+
+    <!-- TELA 2: DASHBOARD -->
+    <div id="dashboard-screen" style="display: none;">
+        <h1>Meta: R$ 5.000,00+</h1>
+        <div class="user-badge" id="userBadge">Perfil: ...</div>
+        
+        <div class="placar">
+            <div>Total Guardado</div>
+            <div class="valor-total" id="displayTotal">R$ 0,00</div>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="barraProgresso"></div>
+            </div>
+            <div id="progressoTexto" style="font-size: 0.9em; color: #777;">Carregando...</div>
+        </div>
+
+        <div class="grid-container" id="grid"></div>
+
+        <button class="btn-secundario" onclick="sairPerfil()" style="margin-bottom: 40px;">Sair / Trocar Perfil</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCYJjFkB_Xp8BkkM8WVA7l7i7DTf_ZDZFA",
+            authDomain: "dias-e3c5a.firebaseapp.com",
+            projectId: "dias-e3c5a",
+            storageBucket: "dias-e3c5a.firebasestorage.app",
+            messagingSenderId: "829637746364",
+            appId: "1:829637746364:web:ba00ffee4e789f6d1afab9"
+        };
+
+        let app, db, auth;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            console.log("Firebase conectado.");
+        } catch (e) {
+            console.error("Erro config:", e);
+            mostrarErro("Erro na configuração interna do App. Verifique o console.");
+        }
+
+        let perfilAtual = null;
+        let dadosDesafio = [];
+        let unsubscribe = null;
+
+        const loginScreen = document.getElementById('login-screen');
+        const dashboardScreen = document.getElementById('dashboard-screen');
+        const loading = document.getElementById('loading');
+        const btnContainer = document.getElementById('btnContainer');
+        const errorBox = document.getElementById('error-box');
+
+        function mostrarErro(mensagem) {
+            errorBox.style.display = 'block';
+            document.getElementById('error-message').innerHTML = mensagem;
+            loginScreen.style.position = 'relative'; 
+            loginScreen.style.zIndex = '1';
+        }
+
+        function alternarLoading(ativar) {
+            if (ativar) {
+                btnContainer.style.display = 'none';
+                loading.style.display = 'block';
+                errorBox.style.display = 'none';
+            } else {
+                btnContainer.style.display = 'flex';
+                loading.style.display = 'none';
+            }
+        }
+
+        // --- FUNÇÃO 1: FAZER LOGIN ---
+        window.fazerLogin = async function() {
+            const nomeInput = document.getElementById('profileInput').value.trim().toLowerCase();
+            const senhaInput = document.getElementById('passwordInput').value.trim();
+
+            if (!nomeInput) return alert("Digite o usuário.");
+            if (!senhaInput) return alert("Digite a senha.");
+
+            alternarLoading(true);
+            perfilAtual = nomeInput;
+
+            try {
+                await signInAnonymously(auth);
+                const docRef = doc(db, 'perfis', perfilAtual);
+                
+                // Verifica se existe ANTES de logar
+                const docSnap = await getDoc(docRef);
+
+                if (!docSnap.exists()) {
+                    alert("Usuário não encontrado! Verifique o nome ou crie uma conta nova.");
+                    alternarLoading(false);
+                    return;
+                }
+
+                const data = docSnap.data();
+                if (data.senha && data.senha !== senhaInput) {
+                    alert("Senha incorreta!");
+                    alternarLoading(false);
+                    return;
+                }
+
+                // Se passou, inicia o app
+                iniciarApp(docRef);
+
+            } catch (error) {
+                console.error("Erro Login:", error);
+                tratarErroGeral(error);
+            }
+        };
+
+        // --- FUNÇÃO 2: CRIAR CONTA ---
+        window.criarConta = async function() {
+            const nomeInput = document.getElementById('profileInput').value.trim().toLowerCase();
+            const senhaInput = document.getElementById('passwordInput').value.trim();
+
+            if (!nomeInput) return alert("Escolha um nome de usuário.");
+            if (!senhaInput) return alert("Crie uma senha.");
+            if (senhaInput.length < 6) return alert("A senha deve ter no mínimo 6 caracteres.");
+
+            alternarLoading(true);
+            perfilAtual = nomeInput;
+
+            try {
+                await signInAnonymously(auth);
+                const docRef = doc(db, 'perfis', perfilAtual);
+                
+                // Verifica se JÁ existe
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    alert("Este nome de usuário já existe! Por favor, escolha outro.");
+                    alternarLoading(false);
+                    return;
+                }
+
+                // Cria novo perfil
+                criarDadosPadrao();
+                await setDoc(docRef, { 
+                    items: dadosDesafio, 
+                    senha: senhaInput,
+                    criadoEm: new Date().toISOString() 
+                });
+
+                // Inicia o app
+                iniciarApp(docRef);
+
+            } catch (error) {
+                console.error("Erro Cadastro:", error);
+                tratarErroGeral(error);
+            }
+        };
+
+        function iniciarApp(docRef) {
+            // Escuta mudanças em tempo real (para manter sincronizado)
+            unsubscribe = onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    dadosDesafio = docSnap.data().items || [];
+                    abrirDashboard();
+                }
+            }, (error) => {
+                console.error("Erro no Listener:", error);
+            });
+        }
+
+        function tratarErroGeral(error) {
+            alternarLoading(false);
+            if(error.code === 'permission-denied') {
+                mostrarErro(`<strong>ACESSO NEGADO:</strong> Banco bloqueado. Libere nas Regras do Firebase.`);
+            } else if(error.code === 'auth/operation-not-allowed') {
+                mostrarErro(`<strong>LOGIN BLOQUEADO:</strong> Ative o login Anônimo no Firebase.`);
+            } else if(error.code === 'auth/unauthorized-domain') {
+                mostrarErro(`<strong>DOMÍNIO BLOQUEADO:</strong> Adicione 127.0.0.1 nos domínios do Firebase.`);
+            } else {
+                mostrarErro("Erro: " + error.code);
+            }
+        }
+
+        function abrirDashboard() {
+            loginScreen.style.display = 'none';
+            dashboardScreen.style.display = 'flex'; 
+            document.getElementById('userBadge').textContent = `Perfil: ${perfilAtual}`;
+            renderizar();
+        }
+
+        function criarDadosPadrao() {
+            dadosDesafio = [];
+            const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+            for(let i=0; i<50; i++) dadosDesafio.push({ valor: randomInt(1, 30), tipo: 'facil', pago: false });
+            for(let i=0; i<50; i++) dadosDesafio.push({ valor: randomInt(31, 48), tipo: 'medio', pago: false });
+            for(let i=0; i<40; i++) dadosDesafio.push({ valor: randomInt(49, 71), tipo: 'dificil', pago: false });
+        }
+
+        function salvarProgresso() {
+            const docRef = doc(db, 'perfis', perfilAtual);
+            updateDoc(docRef, { items: dadosDesafio });
+        }
+
+        function renderizar() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = ''; 
+            
+            let totalGuardado = 0;
+            let diasPagos = 0;
+            const totalDias = 140;
+
+            const grupos = [
+                { id: 'facil', titulo: '🟢 Dias Fáceis (R$ 1 - 30)' },
+                { id: 'medio', titulo: '🔵 Dias Médios (R$ 31 - 48)' },
+                { id: 'dificil', titulo: '🟣 Dias Difíceis (R$ 49 - 71)' }
+            ];
+
+            grupos.forEach(grupo => {
+                const titulo = document.createElement('div');
+                titulo.className = 'section-title';
+                titulo.textContent = grupo.titulo;
+                grid.appendChild(titulo);
+
+                const itensComIndex = dadosDesafio
+                    .map((item, index) => ({ ...item, originalIndex: index }))
+                    .filter(item => item.tipo === grupo.id)
+                    .sort((a, b) => a.valor - b.valor);
+
+                itensComIndex.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = `card ${item.tipo} ${item.pago ? 'pago' : ''}`;
+                    card.textContent = `R$ ${item.valor}`;
+                    
+                    if (item.pago) {
+                        totalGuardado += item.valor;
+                        diasPagos++;
+                    }
+
+                    card.onclick = () => {
+                        dadosDesafio[item.originalIndex].pago = !dadosDesafio[item.originalIndex].pago;
+                        salvarProgresso();
+                    };
+
+                    grid.appendChild(card);
+                });
+            });
+
+            document.getElementById('displayTotal').textContent = totalGuardado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            
+            const pct = (diasPagos / totalDias) * 100;
+            document.getElementById('barraProgresso').style.width = `${pct}%`;
+            document.getElementById('progressoTexto').textContent = `${diasPagos} / ${totalDias} dias pagos`;
+        }
+
+        window.sairPerfil = function() {
+            if(unsubscribe) unsubscribe();
+            perfilAtual = null;
+            dadosDesafio = [];
+            dashboardScreen.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            document.getElementById('profileInput').value = '';
+            document.getElementById('passwordInput').value = '';
+            alternarLoading(false);
+        }
+    </script>
+</body>
+</html>
