@@ -2,7 +2,8 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Ajuste crítico para evitar cortes e permitir zoom se necessário (user-scalable=yes para acessibilidade caso corte) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <!-- PWA: Configurações para iOS (iPhone) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -34,7 +35,6 @@
     <style>
         /* --- DESIGN SYSTEM MODERNO (CSS) --- */
         :root {
-            /* Paleta de Cores Vibrante */
             --primary-gradient: linear-gradient(135deg, #00c853 0%, #64dd17 100%);
             --bg-gradient: linear-gradient(180deg, #e8f5e9 0%, #ffffff 100%);
             --card-shadow: 0 10px 30px -10px rgba(0, 100, 0, 0.15);
@@ -62,10 +62,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px 15px; /* Ajustado para mobile */
+            /* Padding extra no fundo para garantir scroll em telas pequenas */
+            padding: 20px 15px 150px 15px; 
             margin: 0;
             color: #333;
+            /* Altura dinâmica para mobile (dvh) com fallback para vh */
             min-height: 100vh;
+            min-height: 100dvh;
             -webkit-user-select: none;
             user-select: none;
             overflow-x: hidden;
@@ -98,7 +101,7 @@
         .placar {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px); 
-            padding: 25px 20px; /* Ajuste padding interno */
+            padding: 20px;
             border-radius: 24px;
             box-shadow: 0 15px 40px rgba(0, 50, 0, 0.15);
             margin-bottom: 30px;
@@ -106,14 +109,14 @@
             width: 100%;
             max-width: 500px;
             position: sticky;
-            top: 15px;
+            top: 10px; /* Mais perto do topo */
             z-index: 100;
             border: 1px solid rgba(255,255,255,0.6);
             transition: transform 0.3s ease;
         }
 
         .valor-total { 
-            font-size: 3em; 
+            font-size: 2.8em; /* Levemente menor para não quebrar em telas muito estreitas */
             font-weight: 800; 
             background: var(--primary-gradient);
             -webkit-background-clip: text;
@@ -121,7 +124,7 @@
             margin: 5px 0 15px 0;
             letter-spacing: -1px;
             filter: drop-shadow(0 2px 4px rgba(0,200,83,0.2));
-            line-height: 1.2;
+            line-height: 1.1;
         }
 
         .progress-bar-container { 
@@ -169,8 +172,9 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* Reduzi minmax para caber melhor */
-            gap: 12px;
+            /* Ajuste para telas estreitas: colunas menores */
+            grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); 
+            gap: 10px;
             width: 100%;
             max-width: 900px;
             padding-bottom: 30px;
@@ -178,29 +182,30 @@
 
         .section-title {
             grid-column: 1 / -1;
-            margin-top: 40px;
+            margin-top: 30px;
             margin-bottom: 15px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             color: #555;
             display: flex;
             align-items: center;
-            justify-content: space-between; /* Espalha título e botão */
-            flex-wrap: wrap; /* Permite quebrar linha se não couber */
+            justify-content: space-between;
+            flex-wrap: wrap;
             gap: 10px;
         }
         
-        /* Botão pequeno de limpar seção */
         .btn-mini-clear {
             background: none;
             border: 1px solid #ffcdd2;
             color: #e57373;
             font-size: 0.75em;
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-radius: 15px;
             cursor: pointer;
             transition: all 0.2s;
             white-space: nowrap;
+            /* Garante que o botão seja clicável */
+            touch-action: manipulation;
         }
         .btn-mini-clear:hover {
             background: #ffebee;
@@ -210,21 +215,23 @@
 
         .card {
             background-color: white;
-            border-radius: 18px;
+            border-radius: 16px;
             padding: 15px 5px;
             text-align: center;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: #555;
             position: relative;
             overflow: hidden;
             border: 2px solid transparent;
+            /* Melhora o toque no mobile */
+            touch-action: manipulation;
         }
 
-        .card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+        .card:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 15px rgba(0,0,0,0.08); }
         .card:active { transform: scale(0.95); }
 
         .facil { background-color: #f1f8e9; color: #33691e; }
@@ -249,29 +256,32 @@
             justify-content: center; align-items: center;
             padding: 20px;
             width: 100%;
+            /* Permite scroll se o teclado cobrir a tela */
+            overflow-y: auto; 
         }
 
         .card-branco {
             background: white;
-            padding: 40px 25px; /* Ajuste padding lateral */
+            padding: 30px 20px; /* Reduzi padding vertical para caber melhor */
             border-radius: 30px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.1);
             text-align: center;
             max-width: 380px;
             width: 100%;
             position: relative;
+            margin: auto 0; /* Centraliza verticalmente mesmo com scroll */
         }
         
         .login-icon {
             font-size: 3rem;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             display: block;
         }
 
         .input-texto {
-            width: 100%; /* Largura total do container */
+            width: 100%;
             padding: 16px;
-            margin: 12px 0;
+            margin: 10px 0;
             border: 2px solid #f0f0f0;
             border-radius: 16px;
             font-size: 1rem;
@@ -287,7 +297,7 @@
             box-shadow: 0 0 0 4px rgba(0, 200, 83, 0.1);
         }
 
-        .btn-row { display: flex; gap: 15px; width: 100%; margin-top: 20px; justify-content: center; }
+        .btn-row { display: flex; gap: 10px; width: 100%; margin-top: 15px; justify-content: center; }
 
         .btn-base {
             padding: 16px 0;
@@ -298,6 +308,8 @@
             transition: transform 0.2s, box-shadow 0.2s;
             flex: 1; border: none;
             font-family: inherit;
+            /* Evita zoom ao clicar */
+            touch-action: manipulation;
         }
         
         .btn-entrar {
@@ -343,7 +355,12 @@
             color: #ff6f00; 
             border: 2px solid #ffca28;
             margin-top: 15px;
-            display: none; 
+            display: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
         }
         .btn-fix:hover { background: #ffe082; }
 
@@ -388,9 +405,13 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* Ajustes Mobile Específicos */
         @media (max-width: 480px) {
-            .valor-total { font-size: 2.5em; }
-            .card { padding: 15px 5px; font-size: 1em; }
+            .valor-total { font-size: 2.2em; } /* Fonte menor para não vazar */
+            .card { padding: 12px 2px; font-size: 0.9em; }
+            .placar { padding: 15px; width: 95%; } /* Garante que cabe na tela */
+            /* Garante que o container do topo não fique gigante */
+            .app-header { margin-bottom: 10px; }
         }
     </style>
 </head>
