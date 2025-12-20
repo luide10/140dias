@@ -300,6 +300,16 @@
         }
         .btn-secundario:hover { background: #f0f0f0; color: #555; }
 
+        /* Botão especial de correção */
+        .btn-fix {
+            background: #ffecb3; 
+            color: #ff6f00; 
+            border: 2px solid #ffca28;
+            margin-top: 15px;
+            display: none; /* Oculto por padrão */
+        }
+        .btn-fix:hover { background: #ffe082; }
+
         .loading-spinner {
             width: 40px; height: 40px;
             border: 4px solid #f3f3f3;
@@ -385,6 +395,16 @@
 
         <div class="user-badge" id="userBadge">Olá, ...</div>
         
+        <!-- Botão de correção de dados (Aparece se detectar versão antiga) -->
+        <div id="fixDataContainer" style="width: 100%; max-width: 500px; display: none; margin-bottom: 20px;">
+            <button class="btn-base btn-fix" onclick="resetarParaPiramide()">
+                🔄 Atualizar para Pirâmide (Corrige o Bug)
+            </button>
+            <p style="font-size: 0.8em; color: #ff6f00; text-align: center; margin-top: 5px;">
+                Isso vai resetar seus valores para o novo formato.
+            </p>
+        </div>
+        
         <div class="placar">
             <div style="font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 700;">Você já guardou</div>
             <div class="valor-total" id="displayTotal">R$ 0,00</div>
@@ -428,12 +448,14 @@
         let perfilAtual = null;
         let dadosDesafio = [];
         let unsubscribe = null;
+        const VERSAO_ATUAL = 'piramide_v2'; // Controle de versão para forçar atualização
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardScreen = document.getElementById('dashboard-screen');
         const loading = document.getElementById('loading');
         const btnContainer = document.getElementById('btnContainer');
         const errorBox = document.getElementById('error-box');
+        const fixDataContainer = document.getElementById('fixDataContainer');
 
         function mostrarErro(mensagem) {
             errorBox.style.display = 'block';
@@ -516,6 +538,7 @@
                 await setDoc(docRef, { 
                     items: dadosDesafio, 
                     senha: senhaInput,
+                    layout: VERSAO_ATUAL,
                     criadoEm: new Date().toISOString() 
                 });
 
@@ -530,12 +553,33 @@
         function iniciarApp(docRef) {
             unsubscribe = onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists()) {
-                    dadosDesafio = docSnap.data().items || [];
+                    const data = docSnap.data();
+                    dadosDesafio = data.items || [];
+                    
+                    // Verifica se os dados são antigos
+                    if (data.layout !== VERSAO_ATUAL) {
+                        fixDataContainer.style.display = 'block'; 
+                    } else {
+                        fixDataContainer.style.display = 'none';
+                    }
+
                     abrirDashboard();
                 }
             }, (error) => {
                 console.error("Erro no Listener:", error);
             });
+        }
+
+        window.resetarParaPiramide = async function() {
+            if(confirm("Isso vai reiniciar seu progresso para aplicar o novo formato Pirâmide. Continuar?")) {
+                criarDadosPadrao();
+                const docRef = doc(db, 'perfis', perfilAtual);
+                await updateDoc(docRef, { 
+                    items: dadosDesafio,
+                    layout: VERSAO_ATUAL 
+                });
+                alert("Atualizado com sucesso!");
+            }
         }
 
         function tratarErroGeral(error) {
@@ -559,27 +603,29 @@
             renderizar();
         }
 
-        // --- LÓGICA DA PIRÂMIDE (NOVA) ---
+        // --- LÓGICA DA PIRÂMIDE (V2) ---
         function criarDadosPadrao() {
             dadosDesafio = [];
             
-            // Fase 1: Aquecimento (1 a 30) - 30 itens
+            // 1. Fácil (1 a 30) - 30 itens
             for(let i=1; i<=30; i++) dadosDesafio.push({ valor: i, tipo: 'facil', pago: false });
             
-            // Fase 2: Subida (31 a 48) - 18 itens
+            // 2. Médio (31 a 48) - 18 itens
             for(let i=31; i<=48; i++) dadosDesafio.push({ valor: i, tipo: 'medio', pago: false });
             
-            // Fase 3: Pico e Início da Descida (49 a 71) - 23 itens
+            // 3. Difícil IDA (49 a 71) - 23 itens
             for(let i=49; i<=71; i++) dadosDesafio.push({ valor: i, tipo: 'dificil', pago: false });
             
-            // Fase 4: Descida Forte (70 a 49) - 22 itens
+            // 4. Difícil VOLTA (70 a 49) - 22 itens
             for(let i=70; i>=49; i--) dadosDesafio.push({ valor: i, tipo: 'dificil', pago: false });
             
-            // Fase 5: Retorno (48 a 31) - 18 itens
+            // 5. Médio VOLTA (48 a 31) - 18 itens
             for(let i=48; i>=31; i--) dadosDesafio.push({ valor: i, tipo: 'medio', pago: false });
             
-            // Fase 6: Reta Final (30 a 2) - 29 itens (Totalizando 140 dias)
-            for(let i=30; i>=2; i--) dadosDesafio.push({ valor: i, tipo: 'facil', pago: false });
+            // 6. Fácil VOLTA (30 a 1) - 30 itens (AGORA VAI ATÉ 1)
+            for(let i=30; i>=1; i--) dadosDesafio.push({ valor: i, tipo: 'facil', pago: false });
+            
+            // Total: 30 + 18 + 23 + 22 + 18 + 30 = 141 itens
         }
 
         function salvarProgresso() {
@@ -593,30 +639,28 @@
             
             let totalGuardado = 0;
             let diasPagos = 0;
-            const totalDias = 140;
+            
+            // Total calculado dinamicamente com base na nova pirâmide (141)
+            const totalDias = 141;
 
-            // Organização visual por Etapas da Jornada
-            const etapas = [
-                { titulo: '🟢 1ª Etapa: Aquecimento (R$ 1-30)', range: [0, 30] },
-                { titulo: '🔵 2ª Etapa: A Escalada (R$ 31-48)', range: [30, 48] },
-                { titulo: '🟣 3ª Etapa: O Pico do Desafio (R$ 49-71)', range: [48, 71] }, // Ida do difícil
-                { titulo: '🟣 4ª Etapa: Descendo a Montanha (R$ 70-49)', range: [71, 93] }, // Volta do difícil
-                { titulo: '🔵 5ª Etapa: O Retorno (R$ 48-31)', range: [93, 111] }, // Volta do médio
-                { titulo: '🟢 6ª Etapa: Reta Final (R$ 30-2)', range: [111, 140] } // Volta do fácil
+            const grupos = [
+                { titulo: '🟢 Nível Fácil (Ida)', range: [0, 30] },
+                { titulo: '🔵 Nível Médio (Ida)', range: [30, 48] },
+                { titulo: '🟣 Nível Difícil (O Pico)', range: [48, 93] }, // Juntei Ida e Volta do Difícil
+                { titulo: '🔵 Nível Médio (Volta)', range: [93, 111] }, 
+                { titulo: '🟢 Nível Fácil (Volta)', range: [111, 141] } 
             ];
 
-            etapas.forEach(etapa => {
+            grupos.forEach(grupo => {
                 const titulo = document.createElement('div');
                 titulo.className = 'section-title';
-                titulo.textContent = etapa.titulo;
+                titulo.textContent = grupo.titulo;
                 grid.appendChild(titulo);
 
-                // Pega os itens correspondentes a essa etapa baseada no índice
-                const itensDaEtapa = dadosDesafio.slice(etapa.range[0], etapa.range[1]);
+                const itensDaEtapa = dadosDesafio.slice(grupo.range[0], grupo.range[1]);
 
-                // Precisamos saber o índice original real para salvar no banco
                 itensDaEtapa.forEach((item, indexLocal) => {
-                    const indexReal = etapa.range[0] + indexLocal;
+                    const indexReal = grupo.range[0] + indexLocal;
                     
                     const card = document.createElement('div');
                     card.className = `card ${item.tipo} ${item.pago ? 'pago' : ''}`;
