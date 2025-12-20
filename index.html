@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <!-- Ajuste crítico para evitar cortes e permitir zoom se necessário (user-scalable=yes para acessibilidade caso corte) -->
+    <!-- Viewport otimizado para evitar cortes e permitir scroll correto -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <!-- PWA: Configurações para iOS (iPhone) -->
@@ -33,7 +33,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- DESIGN SYSTEM MODERNO (CSS) --- */
+        /* --- DESIGN SYSTEM --- */
         :root {
             --primary-gradient: linear-gradient(135deg, #00c853 0%, #64dd17 100%);
             --bg-gradient: linear-gradient(180deg, #e8f5e9 0%, #ffffff 100%);
@@ -41,7 +41,6 @@
             --text-main: #1b5e20;
             --text-sec: #4caf50;
             
-            /* Status Colors */
             --facil: #a5d6a7;
             --medio: #90caf9;
             --dificil: #ce93d8;
@@ -49,11 +48,11 @@
             --pago-gradient: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%);
         }
 
-        /* CORREÇÃO GLOBAL DE LAYOUT - ISSO RESOLVE O "CORTADO" */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent; /* Remove flash azul no toque */
         }
 
         body {
@@ -62,81 +61,85 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* Padding extra no fundo para garantir scroll em telas pequenas */
-            padding: 20px 15px 150px 15px; 
-            margin: 0;
             color: #333;
-            /* Altura dinâmica para mobile (dvh) com fallback para vh */
             min-height: 100vh;
-            min-height: 100dvh;
-            -webkit-user-select: none;
-            user-select: none;
+            /* Garante que o scroll funcione e tenha espaço no fim */
+            padding-bottom: 120px; 
             overflow-x: hidden;
             width: 100%;
         }
 
-        input { user-select: text; -webkit-user-select: text; }
+        /* --- LAYOUT DO COMPUTADOR (PADRÃO) --- */
+        .container-master {
+            width: 100%;
+            max-width: 900px; /* Limita a largura no PC */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
+        /* HEADER */
         .app-header {
             text-align: center;
             margin-bottom: 20px;
-            animation: fadeInDown 0.8s ease;
             width: 100%;
         }
 
         h1 { 
             color: var(--text-main); 
             margin: 5px 0; 
-            font-size: 1.8rem; 
+            font-size: 2rem; 
             font-weight: 800;
             letter-spacing: -0.5px;
         }
         
         .subtitle {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: var(--text-sec);
             font-weight: 500;
         }
 
+        /* PLACAR (SCOREBOARD) */
         .placar {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px); 
-            padding: 20px;
+            padding: 25px;
             border-radius: 24px;
             box-shadow: 0 15px 40px rgba(0, 50, 0, 0.15);
             margin-bottom: 30px;
             text-align: center;
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
+            /* Sticky suave */
             position: sticky;
-            top: 10px; /* Mais perto do topo */
+            top: 20px;
             z-index: 100;
             border: 1px solid rgba(255,255,255,0.6);
-            transition: transform 0.3s ease;
         }
 
         .valor-total { 
-            font-size: 2.8em; /* Levemente menor para não quebrar em telas muito estreitas */
+            font-size: 3.5em; 
             font-weight: 800; 
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin: 5px 0 15px 0;
-            letter-spacing: -1px;
+            margin: 10px 0 20px 0;
+            letter-spacing: -2px;
+            line-height: 1;
             filter: drop-shadow(0 2px 4px rgba(0,200,83,0.2));
-            line-height: 1.1;
         }
 
+        /* BARRA DE PROGRESSO */
         .progress-bar-container { 
             width: 100%; 
-            height: 22px; 
+            height: 24px; 
             background-color: #eaeff2; 
             border-radius: 50px; 
             overflow: hidden; 
             margin-bottom: 15px; 
             box-shadow: inset 0 3px 6px rgba(0,0,0,0.15), 0 1px 2px rgba(255,255,255,0.8);
             position: relative;
-            border: 1px solid rgba(0,0,0,0.03);
         }
         
         .progress-bar-fill { 
@@ -146,93 +149,59 @@
             transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             border-radius: 50px;
             position: relative;
-            box-shadow: 2px 0 10px rgba(0,200,83,0.4);
         }
 
         .progress-bar-fill::after {
             content: '';
-            position: absolute;
-            top: 2px; left: 5px; right: 5px; height: 40%;
+            position: absolute; top: 2px; left: 5px; right: 5px; height: 40%;
             background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.1) 100%);
-            border-radius: 50px;
-            opacity: 0.8;
+            border-radius: 50px; opacity: 0.8;
         }
 
         #progressoTexto {
-            font-size: 0.85em;
-            color: #666;
-            font-weight: 700;
-            background: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            margin-top: 5px;
+            font-size: 0.9em;
+            color: #666; font-weight: 700;
+            background: white; padding: 5px 15px; border-radius: 20px;
+            display: inline-block; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
+        /* GRID DE CARTÕES */
         .grid-container {
             display: grid;
-            /* Ajuste para telas estreitas: colunas menores */
-            grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); 
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); 
+            gap: 15px;
             width: 100%;
-            max-width: 900px;
-            padding-bottom: 30px;
+            padding-bottom: 40px;
         }
 
         .section-title {
             grid-column: 1 / -1;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 1rem;
-            font-weight: 700;
-            color: #555;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
+            margin-top: 40px; margin-bottom: 15px;
+            font-size: 1.1rem; font-weight: 700; color: #555;
+            display: flex; align-items: center; justify-content: space-between;
             gap: 10px;
         }
         
         .btn-mini-clear {
-            background: none;
-            border: 1px solid #ffcdd2;
-            color: #e57373;
-            font-size: 0.75em;
-            padding: 6px 12px;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-            /* Garante que o botão seja clicável */
-            touch-action: manipulation;
-        }
-        .btn-mini-clear:hover {
-            background: #ffebee;
-            color: #c62828;
-            border-color: #ef9a9a;
+            background: white; border: 1px solid #ffcdd2; color: #e57373;
+            font-size: 0.75em; padding: 6px 12px; border-radius: 15px;
+            cursor: pointer; font-weight: 600;
         }
 
         .card {
             background-color: white;
-            border-radius: 16px;
-            padding: 15px 5px;
+            border-radius: 18px;
+            padding: 18px 5px;
             text-align: center;
             cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.04);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: #555;
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 700; font-size: 1.1rem; color: #555;
             border: 2px solid transparent;
-            /* Melhora o toque no mobile */
-            touch-action: manipulation;
+            user-select: none;
         }
 
-        .card:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 15px rgba(0,0,0,0.08); }
-        .card:active { transform: scale(0.95); }
+        .card:active { transform: scale(0.9); } /* Feedback de toque */
 
         .facil { background-color: #f1f8e9; color: #33691e; }
         .medio { background-color: #e3f2fd; color: #0d47a1; }
@@ -247,7 +216,8 @@
             opacity: 0.9;
             transform: scale(0.95);
         }
-        
+
+        /* TELA DE LOGIN */
         .centro-tela {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: var(--bg-gradient);
@@ -255,164 +225,94 @@
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             padding: 20px;
-            width: 100%;
-            /* Permite scroll se o teclado cobrir a tela */
-            overflow-y: auto; 
+            overflow-y: auto; /* Permite scroll se tela for pequena */
         }
 
         .card-branco {
             background: white;
-            padding: 30px 20px; /* Reduzi padding vertical para caber melhor */
+            padding: 40px;
             border-radius: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
             text-align: center;
-            max-width: 380px;
+            max-width: 400px;
             width: 100%;
-            position: relative;
-            margin: auto 0; /* Centraliza verticalmente mesmo com scroll */
+            margin: auto 0;
         }
+
+        .login-icon { font-size: 4rem; display: block; margin-bottom: 10px; }
+        .input-texto { width: 100%; padding: 18px; margin: 10px 0; border: 2px solid #f0f0f0; border-radius: 16px; font-size: 1.1rem; text-align: center; outline: none; background: #fafafa; }
+        .input-texto:focus { border-color: #00c853; background: white; }
+
+        .btn-row { display: flex; gap: 10px; width: 100%; margin-top: 20px; }
+        .btn-base { padding: 18px 0; font-size: 1.1em; border-radius: 16px; cursor: pointer; font-weight: 700; flex: 1; border: none; }
+        .btn-entrar { background: var(--primary-gradient); color: white; }
+        .btn-cadastrar { background: white; color: #2196f3; border: 2px solid #e3f2fd; }
         
-        .login-icon {
-            font-size: 3rem;
-            margin-bottom: 5px;
-            display: block;
+        .btn-secundario { background: none; border: none; color: #888; text-decoration: underline; margin-top: 30px; padding: 15px; display: block; width: 100%; }
+        .btn-danger { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; margin-top: 20px; width: 100%; max-width: 100%; padding: 18px; border-radius: 16px; font-weight: 700; }
+        .btn-fix { background: #ffecb3; color: #ff6f00; border: 2px solid #ffca28; margin-top: 15px; width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; display: none; }
+
+        .loading-spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #00c853; border-radius: 50%; margin: 20px auto; animation: spin 1s linear infinite; display: none; }
+        .user-badge { background: #e8f5e9; color: #2e7d32; padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.9em; margin-bottom: 20px; display: inline-block; }
+        #error-box { display: none; background-color: #ffebee; color: #c62828; padding: 20px; border-radius: 16px; margin-bottom: 20px; max-width: 500px; text-align: left; }
+
+        /* --- MODO CELULAR (RESPONSIVIDADE INTELIGENTE) --- */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px 10px 150px 10px; /* Mais espaço embaixo, menos nos lados */
+            }
+
+            .container-master {
+                padding: 0; /* Remove padding extra do container */
+            }
+
+            h1 { font-size: 1.5rem; } /* Título menor */
+
+            /* Placar compacto e sempre no topo */
+            .placar {
+                padding: 15px;
+                top: 5px; /* Cola no topo */
+                margin-bottom: 20px;
+                border-radius: 20px;
+                box-shadow: 0 5px 20px rgba(0, 50, 0, 0.1);
+            }
+
+            .valor-total { 
+                font-size: 2.5em; /* Valor menor para não quebrar linha */
+                margin: 5px 0 10px 0;
+            }
+
+            .progress-bar-container { height: 18px; margin-bottom: 10px; }
+
+            /* Grid mais apertadinho para caber mais */
+            .grid-container {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+                gap: 8px;
+            }
+
+            .card {
+                padding: 12px 2px;
+                font-size: 0.9rem;
+                border-radius: 12px;
+            }
+
+            /* Botões de seção ocupam a largura toda se precisar */
+            .section-title {
+                margin-top: 25px;
+                font-size: 0.95rem;
+            }
+
+            /* Login adaptado para telas pequenas */
+            .card-branco {
+                padding: 25px 20px;
+                border-radius: 20px;
+            }
+            .login-icon { font-size: 2.5rem; }
+            .btn-base { padding: 14px 0; font-size: 1em; }
         }
 
-        .input-texto {
-            width: 100%;
-            padding: 16px;
-            margin: 10px 0;
-            border: 2px solid #f0f0f0;
-            border-radius: 16px;
-            font-size: 1rem;
-            text-align: center;
-            outline: none;
-            transition: all 0.3s;
-            background: #fafafa;
-            font-family: inherit;
-        }
-        .input-texto:focus { 
-            border-color: #00c853; 
-            background: white;
-            box-shadow: 0 0 0 4px rgba(0, 200, 83, 0.1);
-        }
-
-        .btn-row { display: flex; gap: 10px; width: 100%; margin-top: 15px; justify-content: center; }
-
-        .btn-base {
-            padding: 16px 0;
-            font-size: 1em;
-            border-radius: 16px;
-            cursor: pointer;
-            font-weight: 700;
-            transition: transform 0.2s, box-shadow 0.2s;
-            flex: 1; border: none;
-            font-family: inherit;
-            /* Evita zoom ao clicar */
-            touch-action: manipulation;
-        }
-        
-        .btn-entrar {
-            background: var(--primary-gradient);
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 200, 83, 0.3);
-        }
-        .btn-entrar:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 200, 83, 0.4); }
-
-        .btn-cadastrar {
-            background: white;
-            color: #2196f3;
-            border: 2px solid #e3f2fd;
-        }
-        .btn-cadastrar:hover { background: #e3f2fd; }
-
-        .btn-secundario {
-            background: none; border: none; color: #999;
-            text-decoration: none; font-weight: 600; font-size: 0.9em;
-            margin-top: 30px; cursor: pointer;
-            padding: 10px 20px; border-radius: 50px;
-            transition: background 0.2s;
-        }
-        .btn-secundario:hover { background: #f0f0f0; color: #555; }
-
-        .btn-danger {
-            background: #ffebee;
-            color: #c62828;
-            border: 1px solid #ffcdd2;
-            margin-top: 15px;
-            width: 100%;
-            max-width: 300px;
-            padding: 15px;
-            border-radius: 16px;
-            cursor: pointer;
-            font-weight: 700;
-            font-family: inherit;
-        }
-        .btn-danger:hover { background: #ef9a9a; color: white; }
-
-        .btn-fix {
-            background: #ffecb3; 
-            color: #ff6f00; 
-            border: 2px solid #ffca28;
-            margin-top: 15px;
-            display: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .btn-fix:hover { background: #ffe082; }
-
-        .loading-spinner {
-            width: 40px; height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #00c853;
-            border-radius: 50%;
-            margin: 20px auto;
-            animation: spin 1s linear infinite;
-            display: none;
-        }
-        
-        .user-badge {
-            background: #e8f5e9;
-            color: #2e7d32;
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.9em;
-            margin-bottom: 20px;
-            display: inline-block;
-        }
-
-        #error-box {
-            display: none;
-            background-color: #ffebee;
-            color: #c62828;
-            padding: 20px;
-            border-radius: 16px;
-            border: none;
-            margin-bottom: 20px;
-            max-width: 500px;
-            text-align: left;
-            line-height: 1.6;
-            box-shadow: 0 5px 15px rgba(198, 40, 40, 0.1);
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Ajustes Mobile Específicos */
-        @media (max-width: 480px) {
-            .valor-total { font-size: 2.2em; } /* Fonte menor para não vazar */
-            .card { padding: 12px 2px; font-size: 0.9em; }
-            .placar { padding: 15px; width: 95%; } /* Garante que cabe na tela */
-            /* Garante que o container do topo não fique gigante */
-            .app-header { margin-bottom: 10px; }
-        }
     </style>
 </head>
 <body>
@@ -426,8 +326,8 @@
     <div id="login-screen" class="centro-tela">
         <div class="card-branco">
             <span class="login-icon">🏔️</span>
-            <h2 style="color: #333; margin-top: 0;">Jornada 5k</h2>
-            <p style="color: #666; font-size: 0.95em;">Escale a montanha da economia.</p>
+            <h2 style="color: #333; margin-top: 0; font-size: 1.5rem;">Jornada 5k</h2>
+            <p style="color: #666; font-size: 0.9em;">Escale a montanha da economia.</p>
             
             <input type="text" id="profileInput" class="input-texto" placeholder="Seu Usuário" autocomplete="off">
             <input type="password" id="passwordInput" class="input-texto" placeholder="Sua Senha" autocomplete="off">
@@ -439,12 +339,12 @@
                 <button class="btn-base btn-cadastrar" onclick="criarConta()">Criar</button>
             </div>
             
-            <p style="font-size:0.75em; color:#bbb; margin-top:25px; margin-bottom: 0;">Sincronizado na nuvem ☁️</p>
+            <p style="font-size:0.7em; color:#bbb; margin-top:20px; margin-bottom: 0;">Sincronizado na nuvem ☁️</p>
         </div>
     </div>
 
     <!-- TELA 2: DASHBOARD -->
-    <div id="dashboard-screen" style="display: none;">
+    <div id="dashboard-screen" style="display: none;" class="container-master">
         
         <div class="app-header">
             <h1>Jornada 5k</h1>
@@ -453,9 +353,8 @@
 
         <div class="user-badge" id="userBadge">Olá, ...</div>
         
-        <!-- Botão de correção de dados (Aparece se detectar versão antiga) -->
-        <div id="fixDataContainer" style="width: 100%; max-width: 500px; display: none; margin-bottom: 20px;">
-            <button class="btn-base btn-fix" onclick="resetarParaPiramide()">
+        <div id="fixDataContainer" style="width: 100%; display: none; margin-bottom: 20px;">
+            <button class="btn-fix" onclick="resetarParaPiramide()">
                 🔄 Atualizar para Pirâmide (Corrige o Bug)
             </button>
             <p style="font-size: 0.8em; color: #ff6f00; text-align: center; margin-top: 5px;">
@@ -464,19 +363,19 @@
         </div>
         
         <div class="placar">
-            <div style="font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 700;">Você já guardou</div>
+            <div style="font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; color: #888; font-weight: 700;">Você já guardou</div>
             <div class="valor-total" id="displayTotal">R$ 0,00</div>
             
             <div class="progress-bar-container">
                 <div class="progress-bar-fill" id="barraProgresso"></div>
             </div>
-            <div id="progressoTexto" style="font-size: 0.9em; color: #666; font-weight: 600;">Carregando...</div>
+            <div id="progressoTexto">Carregando...</div>
         </div>
 
         <div class="grid-container" id="grid"></div>
 
-        <button class="btn-base btn-danger" onclick="limparTudo()">🗑️ Limpar Todo o Progresso</button>
-        <button class="btn-secundario" onclick="sairPerfil()" style="margin-bottom: 40px;">Sair / Trocar Conta</button>
+        <button class="btn-danger" onclick="limparTudo()">🗑️ Limpar Todo o Progresso</button>
+        <button class="btn-secundario" onclick="sairPerfil()">Sair / Trocar Conta</button>
     </div>
 
     <script type="module">
@@ -507,7 +406,7 @@
         let perfilAtual = null;
         let dadosDesafio = [];
         let unsubscribe = null;
-        const VERSAO_ATUAL = 'piramide_v2'; // Controle de versão para forçar atualização
+        const VERSAO_ATUAL = 'piramide_v2'; 
 
         const loginScreen = document.getElementById('login-screen');
         const dashboardScreen = document.getElementById('dashboard-screen');
@@ -615,7 +514,6 @@
                     const data = docSnap.data();
                     dadosDesafio = data.items || [];
                     
-                    // Verifica se os dados são antigos
                     if (data.layout !== VERSAO_ATUAL) {
                         fixDataContainer.style.display = 'block'; 
                     } else {
@@ -641,7 +539,6 @@
             }
         }
 
-        // Funções de limpeza
         window.limparIntervalo = function(inicio, fim) {
             if(confirm("Tem certeza que quer limpar apenas esta seção?")) {
                 for(let i=inicio; i<fim; i++) {
@@ -661,11 +558,11 @@
         function tratarErroGeral(error) {
             alternarLoading(false);
             if(error.code === 'permission-denied') {
-                mostrarErro(`<strong>ACESSO NEGADO:</strong> Banco bloqueado. Vá no console do Firebase > Firestore > Regras e mude para 'true'.`);
+                mostrarErro(`<strong>ACESSO NEGADO:</strong> Banco bloqueado.`);
             } else if(error.code === 'auth/operation-not-allowed') {
-                mostrarErro(`<strong>LOGIN BLOQUEADO:</strong> Ative o login Anônimo no Firebase.`);
+                mostrarErro(`<strong>LOGIN BLOQUEADO:</strong> Ative o login Anônimo.`);
             } else if(error.code === 'auth/unauthorized-domain') {
-                mostrarErro(`<strong>DOMÍNIO BLOQUEADO:</strong> Adicione o domínio atual no Firebase Authentication.`);
+                mostrarErro(`<strong>DOMÍNIO BLOQUEADO:</strong> Adicione o domínio.`);
             } else {
                 mostrarErro("Erro: " + error.code);
             }
@@ -679,29 +576,14 @@
             renderizar();
         }
 
-        // --- LÓGICA DA PIRÂMIDE (V2) ---
         function criarDadosPadrao() {
             dadosDesafio = [];
-            
-            // 1. Fácil (1 a 30) - 30 itens
             for(let i=1; i<=30; i++) dadosDesafio.push({ valor: i, tipo: 'facil', pago: false });
-            
-            // 2. Médio (31 a 48) - 18 itens
             for(let i=31; i<=48; i++) dadosDesafio.push({ valor: i, tipo: 'medio', pago: false });
-            
-            // 3. Difícil IDA (49 a 71) - 23 itens
             for(let i=49; i<=71; i++) dadosDesafio.push({ valor: i, tipo: 'dificil', pago: false });
-            
-            // 4. Difícil VOLTA (70 a 49) - 22 itens
             for(let i=70; i>=49; i--) dadosDesafio.push({ valor: i, tipo: 'dificil', pago: false });
-            
-            // 5. Médio VOLTA (48 a 31) - 18 itens
             for(let i=48; i>=31; i--) dadosDesafio.push({ valor: i, tipo: 'medio', pago: false });
-            
-            // 6. Fácil VOLTA (30 a 1) - 30 itens (AGORA VAI ATÉ 1)
             for(let i=30; i>=1; i--) dadosDesafio.push({ valor: i, tipo: 'facil', pago: false });
-            
-            // Total: 30 + 18 + 23 + 22 + 18 + 30 = 141 itens
         }
 
         function salvarProgresso() {
@@ -715,20 +597,17 @@
             
             let totalGuardado = 0;
             let diasPagos = 0;
-            
-            // Total calculado dinamicamente com base na nova pirâmide (141)
             const totalDias = 141;
 
             const grupos = [
                 { titulo: '🟢 Nível Fácil (Ida)', range: [0, 30] },
                 { titulo: '🔵 Nível Médio (Ida)', range: [30, 48] },
-                { titulo: '🟣 Nível Difícil (O Pico)', range: [48, 93] }, // Juntei Ida e Volta do Difícil
+                { titulo: '🟣 Nível Difícil (O Pico)', range: [48, 93] }, 
                 { titulo: '🔵 Nível Médio (Volta)', range: [93, 111] }, 
                 { titulo: '🟢 Nível Fácil (Volta)', range: [111, 141] } 
             ];
 
             grupos.forEach(grupo => {
-                // Header da seção (com botão limpar)
                 const tituloContainer = document.createElement('div');
                 tituloContainer.className = 'section-title';
                 
@@ -744,12 +623,10 @@
                 tituloContainer.appendChild(btnLimpar);
                 grid.appendChild(tituloContainer);
 
-                // Cards da seção
                 const itensDaEtapa = dadosDesafio.slice(grupo.range[0], grupo.range[1]);
 
                 itensDaEtapa.forEach((item, indexLocal) => {
                     const indexReal = grupo.range[0] + indexLocal;
-                    
                     const card = document.createElement('div');
                     card.className = `card ${item.tipo} ${item.pago ? 'pago' : ''}`;
                     card.textContent = `R$ ${item.valor}`;
