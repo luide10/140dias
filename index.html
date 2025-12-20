@@ -49,19 +49,27 @@
             --pago-gradient: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%);
         }
 
+        /* CORREÇÃO GLOBAL DE LAYOUT - ISSO RESOLVE O "CORTADO" */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Outfit', sans-serif;
             background: var(--bg-gradient);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 20px 15px; /* Ajustado para mobile */
             margin: 0;
             color: #333;
             min-height: 100vh;
             -webkit-user-select: none;
             user-select: none;
             overflow-x: hidden;
+            width: 100%;
         }
 
         input { user-select: text; -webkit-user-select: text; }
@@ -70,6 +78,7 @@
             text-align: center;
             margin-bottom: 20px;
             animation: fadeInDown 0.8s ease;
+            width: 100%;
         }
 
         h1 { 
@@ -89,7 +98,7 @@
         .placar {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px); 
-            padding: 25px;
+            padding: 25px 20px; /* Ajuste padding interno */
             border-radius: 24px;
             box-shadow: 0 15px 40px rgba(0, 50, 0, 0.15);
             margin-bottom: 30px;
@@ -97,7 +106,7 @@
             width: 100%;
             max-width: 500px;
             position: sticky;
-            top: 20px;
+            top: 15px;
             z-index: 100;
             border: 1px solid rgba(255,255,255,0.6);
             transition: transform 0.3s ease;
@@ -112,6 +121,7 @@
             margin: 5px 0 15px 0;
             letter-spacing: -1px;
             filter: drop-shadow(0 2px 4px rgba(0,200,83,0.2));
+            line-height: 1.2;
         }
 
         .progress-bar-container { 
@@ -159,8 +169,8 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* Reduzi minmax para caber melhor */
+            gap: 12px;
             width: 100%;
             max-width: 900px;
             padding-bottom: 30px;
@@ -176,6 +186,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between; /* Espalha título e botão */
+            flex-wrap: wrap; /* Permite quebrar linha se não couber */
             gap: 10px;
         }
         
@@ -200,13 +211,13 @@
         .card {
             background-color: white;
             border-radius: 18px;
-            padding: 18px 5px;
+            padding: 15px 5px;
             text-align: center;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.03);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             font-weight: 700;
-            font-size: 1.1em;
+            font-size: 1rem;
             color: #555;
             position: relative;
             overflow: hidden;
@@ -237,11 +248,12 @@
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             padding: 20px;
+            width: 100%;
         }
 
         .card-branco {
             background: white;
-            padding: 40px;
+            padding: 40px 25px; /* Ajuste padding lateral */
             border-radius: 30px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.1);
             text-align: center;
@@ -257,7 +269,7 @@
         }
 
         .input-texto {
-            width: 85%;
+            width: 100%; /* Largura total do container */
             padding: 16px;
             margin: 12px 0;
             border: 2px solid #f0f0f0;
@@ -318,6 +330,11 @@
             margin-top: 15px;
             width: 100%;
             max-width: 300px;
+            padding: 15px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: inherit;
         }
         .btn-danger:hover { background: #ef9a9a; color: white; }
 
