@@ -163,7 +163,7 @@
             gap: 15px;
             width: 100%;
             max-width: 900px;
-            padding-bottom: 80px;
+            padding-bottom: 30px;
         }
 
         .section-title {
@@ -175,15 +175,26 @@
             color: #555;
             display: flex;
             align-items: center;
+            justify-content: space-between; /* Espalha título e botão */
             gap: 10px;
         }
         
-        .section-title::after {
-            content: '';
-            flex: 1;
-            height: 2px;
-            background: #e0e0e0;
-            border-radius: 2px;
+        /* Botão pequeno de limpar seção */
+        .btn-mini-clear {
+            background: none;
+            border: 1px solid #ffcdd2;
+            color: #e57373;
+            font-size: 0.75em;
+            padding: 5px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .btn-mini-clear:hover {
+            background: #ffebee;
+            color: #c62828;
+            border-color: #ef9a9a;
         }
 
         .card {
@@ -300,13 +311,22 @@
         }
         .btn-secundario:hover { background: #f0f0f0; color: #555; }
 
-        /* Botão especial de correção */
+        .btn-danger {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+            margin-top: 15px;
+            width: 100%;
+            max-width: 300px;
+        }
+        .btn-danger:hover { background: #ef9a9a; color: white; }
+
         .btn-fix {
             background: #ffecb3; 
             color: #ff6f00; 
             border: 2px solid #ffca28;
             margin-top: 15px;
-            display: none; /* Oculto por padrão */
+            display: none; 
         }
         .btn-fix:hover { background: #ffe082; }
 
@@ -417,7 +437,8 @@
 
         <div class="grid-container" id="grid"></div>
 
-        <button class="btn-secundario" onclick="sairPerfil()">Sair / Trocar Conta</button>
+        <button class="btn-base btn-danger" onclick="limparTudo()">🗑️ Limpar Todo o Progresso</button>
+        <button class="btn-secundario" onclick="sairPerfil()" style="margin-bottom: 40px;">Sair / Trocar Conta</button>
     </div>
 
     <script type="module">
@@ -582,6 +603,23 @@
             }
         }
 
+        // Funções de limpeza
+        window.limparIntervalo = function(inicio, fim) {
+            if(confirm("Tem certeza que quer limpar apenas esta seção?")) {
+                for(let i=inicio; i<fim; i++) {
+                    dadosDesafio[i].pago = false;
+                }
+                salvarProgresso();
+            }
+        }
+
+        window.limparTudo = function() {
+            if(confirm("ATENÇÃO: Isso vai apagar todo o dinheiro marcado. Tem certeza?")) {
+                dadosDesafio.forEach(item => item.pago = false);
+                salvarProgresso();
+            }
+        }
+
         function tratarErroGeral(error) {
             alternarLoading(false);
             if(error.code === 'permission-denied') {
@@ -652,11 +690,23 @@
             ];
 
             grupos.forEach(grupo => {
-                const titulo = document.createElement('div');
-                titulo.className = 'section-title';
-                titulo.textContent = grupo.titulo;
-                grid.appendChild(titulo);
+                // Header da seção (com botão limpar)
+                const tituloContainer = document.createElement('div');
+                tituloContainer.className = 'section-title';
+                
+                const texto = document.createElement('span');
+                texto.textContent = grupo.titulo;
+                
+                const btnLimpar = document.createElement('button');
+                btnLimpar.className = 'btn-mini-clear';
+                btnLimpar.textContent = 'Limpar Seção';
+                btnLimpar.onclick = () => limparIntervalo(grupo.range[0], grupo.range[1]);
 
+                tituloContainer.appendChild(texto);
+                tituloContainer.appendChild(btnLimpar);
+                grid.appendChild(tituloContainer);
+
+                // Cards da seção
                 const itensDaEtapa = dadosDesafio.slice(grupo.range[0], grupo.range[1]);
 
                 itensDaEtapa.forEach((item, indexLocal) => {
