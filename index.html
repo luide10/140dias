@@ -27,7 +27,7 @@
 
     <meta name="theme-color" content="#00c853">
 
-    <title>Desafio 5k - Premium</title>
+    <title>Desafio 5k - Pirâmide</title>
     <!-- Fonte Moderna -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     
@@ -50,7 +50,7 @@
         }
 
         body {
-            font-family: 'Outfit', sans-serif; /* Fonte mais arredondada e moderna */
+            font-family: 'Outfit', sans-serif;
             background: var(--bg-gradient);
             display: flex;
             flex-direction: column;
@@ -64,10 +64,8 @@
             overflow-x: hidden;
         }
 
-        /* Permite selecionar texto nos inputs */
         input { user-select: text; -webkit-user-select: text; }
 
-        /* HEADER ANIMADO */
         .app-header {
             text-align: center;
             margin-bottom: 20px;
@@ -88,13 +86,11 @@
             font-weight: 500;
         }
 
-        /* CARD DE PLACAR FLUTUANTE (Melhorado) */
         .placar {
-            background: rgba(255, 255, 255, 0.95); /* Um pouco mais sólido para destacar */
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px); 
             padding: 25px;
             border-radius: 24px;
-            /* Sombra mais forte para dar efeito de flutuar */
             box-shadow: 0 15px 40px rgba(0, 50, 0, 0.15);
             margin-bottom: 30px;
             text-align: center;
@@ -112,21 +108,19 @@
             font-weight: 800; 
             background: var(--primary-gradient);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent; /* Texto com gradiente */
+            -webkit-text-fill-color: transparent;
             margin: 5px 0 15px 0;
             letter-spacing: -1px;
             filter: drop-shadow(0 2px 4px rgba(0,200,83,0.2));
         }
 
-        /* BARRA DE PROGRESSO "TUBO 3D" */
         .progress-bar-container { 
             width: 100%; 
-            height: 22px; /* Mais alta e robusta */
+            height: 22px; 
             background-color: #eaeff2; 
             border-radius: 50px; 
             overflow: hidden; 
             margin-bottom: 15px; 
-            /* Sombra interna para parecer um buraco/tubo */
             box-shadow: inset 0 3px 6px rgba(0,0,0,0.15), 0 1px 2px rgba(255,255,255,0.8);
             position: relative;
             border: 1px solid rgba(0,0,0,0.03);
@@ -134,17 +128,14 @@
         
         .progress-bar-fill { 
             height: 100%; 
-            /* Gradiente horizontal vibrante */
             background: linear-gradient(90deg, #00e676, #00c853);
             width: 0%; 
-            /* Transição elástica suave */
             transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             border-radius: 50px;
             position: relative;
-            box-shadow: 2px 0 10px rgba(0,200,83,0.4); /* Brilho na ponta */
+            box-shadow: 2px 0 10px rgba(0,200,83,0.4);
         }
 
-        /* Efeito de brilho/vidro em cima da barra */
         .progress-bar-fill::after {
             content: '';
             position: absolute;
@@ -154,7 +145,6 @@
             opacity: 0.8;
         }
 
-        /* Texto do progresso */
         #progressoTexto {
             font-size: 0.85em;
             color: #666;
@@ -167,7 +157,6 @@
             margin-top: 5px;
         }
 
-        /* GRID MODERNIZADO */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
@@ -179,8 +168,8 @@
 
         .section-title {
             grid-column: 1 / -1;
-            margin-top: 30px;
-            margin-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 15px;
             font-size: 1.1rem;
             font-weight: 700;
             color: #555;
@@ -197,7 +186,6 @@
             border-radius: 2px;
         }
 
-        /* CARDS DE VALOR (CHIPS) */
         .card {
             background-color: white;
             border-radius: 18px;
@@ -205,7 +193,7 @@
             text-align: center;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efeito elástico */
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             font-weight: 700;
             font-size: 1.1em;
             color: #555;
@@ -217,12 +205,10 @@
         .card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
         .card:active { transform: scale(0.95); }
 
-        /* CORES SUAVES PARA NÃO PAGOS */
         .facil { background-color: #f1f8e9; color: #33691e; }
         .medio { background-color: #e3f2fd; color: #0d47a1; }
         .dificil { background-color: #f3e5f5; color: #4a148c; }
 
-        /* ESTADO PAGO (VERMELHO GRADIENTE) */
         .card.pago {
             background: var(--pago-gradient) !important;
             color: white !important;
@@ -233,7 +219,6 @@
             transform: scale(0.95);
         }
         
-        /* TELA DE LOGIN ESTILIZADA */
         .centro-tela {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: var(--bg-gradient);
@@ -254,7 +239,6 @@
             position: relative;
         }
         
-        /* Icone do cofre no login */
         .login-icon {
             font-size: 3rem;
             margin-bottom: 10px;
@@ -280,7 +264,6 @@
             box-shadow: 0 0 0 4px rgba(0, 200, 83, 0.1);
         }
 
-        /* BOTÕES MODERNOS */
         .btn-row { display: flex; gap: 15px; width: 100%; margin-top: 20px; justify-content: center; }
 
         .btn-base {
@@ -317,7 +300,6 @@
         }
         .btn-secundario:hover { background: #f0f0f0; color: #555; }
 
-        /* LOADING ANIMADO */
         .loading-spinner {
             width: 40px; height: 40px;
             border: 4px solid #f3f3f3;
@@ -328,7 +310,6 @@
             display: none;
         }
         
-        /* User Badge */
         .user-badge {
             background: #e8f5e9;
             color: #2e7d32;
@@ -340,7 +321,6 @@
             display: inline-block;
         }
 
-        /* ERRO */
         #error-box {
             display: none;
             background-color: #ffebee;
@@ -361,7 +341,6 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Ajustes Mobile */
         @media (max-width: 480px) {
             .valor-total { font-size: 2.5em; }
             .card { padding: 15px 5px; font-size: 1em; }
@@ -370,18 +349,17 @@
 </head>
 <body>
 
-    <!-- CAIXA DE AJUDA PARA ERROS -->
     <div id="error-box">
         <h3>⚠️ Atenção</h3>
         <p id="error-message">Erro desconhecido.</p>
     </div>
 
-    <!-- TELA 1: LOGIN / PERFIL -->
+    <!-- TELA 1: LOGIN -->
     <div id="login-screen" class="centro-tela">
         <div class="card-branco">
-            <span class="login-icon">🐷</span>
-            <h2 style="color: #333; margin-top: 0;">Bora Economizar?</h2>
-            <p style="color: #666; font-size: 0.95em;">Acesse seu cofre virtual.</p>
+            <span class="login-icon">🏔️</span>
+            <h2 style="color: #333; margin-top: 0;">Jornada 5k</h2>
+            <p style="color: #666; font-size: 0.95em;">Escale a montanha da economia.</p>
             
             <input type="text" id="profileInput" class="input-texto" placeholder="Seu Usuário" autocomplete="off">
             <input type="password" id="passwordInput" class="input-texto" placeholder="Sua Senha" autocomplete="off">
@@ -401,8 +379,8 @@
     <div id="dashboard-screen" style="display: none;">
         
         <div class="app-header">
-            <h1>Desafio 5k</h1>
-            <p class="subtitle">Guarde um pouco todo dia ✨</p>
+            <h1>Jornada 5k</h1>
+            <p class="subtitle">Subindo a montanha! 🧗</p>
         </div>
 
         <div class="user-badge" id="userBadge">Olá, ...</div>
@@ -460,7 +438,6 @@
         function mostrarErro(mensagem) {
             errorBox.style.display = 'block';
             document.getElementById('error-message').innerHTML = mensagem;
-            // Se der erro, garante que a tela de login fique visível
             loginScreen.style.zIndex = '3000';
             loading.style.display = 'none';
             btnContainer.style.display = 'flex';
@@ -577,31 +554,32 @@
         function abrirDashboard() {
             loginScreen.style.display = 'none';
             dashboardScreen.style.display = 'flex'; 
-            // Capitalizar primeira letra do nome
             const nomeFormatado = perfilAtual.charAt(0).toUpperCase() + perfilAtual.slice(1);
             document.getElementById('userBadge').textContent = `👋 Olá, ${nomeFormatado}`;
             renderizar();
         }
 
-        // Função ajustada para criar sequencias cíclicas em vez de random
+        // --- LÓGICA DA PIRÂMIDE (NOVA) ---
         function criarDadosPadrao() {
             dadosDesafio = [];
             
-            // Função auxiliar para preencher sequencialmente
-            const preencherCiclo = (min, max, quantidade, tipo) => {
-                let atual = min;
-                for(let i=0; i < quantidade; i++) {
-                    dadosDesafio.push({ valor: atual, tipo: tipo, pago: false });
-                    atual++;
-                    // Se passou do máximo, volta pro mínimo (efeito ciclo)
-                    if(atual > max) atual = min;
-                }
-            };
-
-            // Gera as sequências (ex: 1, 2, 3... 30, 1, 2...)
-            preencherCiclo(1, 30, 50, 'facil');
-            preencherCiclo(31, 48, 50, 'medio');
-            preencherCiclo(49, 71, 40, 'dificil');
+            // Fase 1: Aquecimento (1 a 30) - 30 itens
+            for(let i=1; i<=30; i++) dadosDesafio.push({ valor: i, tipo: 'facil', pago: false });
+            
+            // Fase 2: Subida (31 a 48) - 18 itens
+            for(let i=31; i<=48; i++) dadosDesafio.push({ valor: i, tipo: 'medio', pago: false });
+            
+            // Fase 3: Pico e Início da Descida (49 a 71) - 23 itens
+            for(let i=49; i<=71; i++) dadosDesafio.push({ valor: i, tipo: 'dificil', pago: false });
+            
+            // Fase 4: Descida Forte (70 a 49) - 22 itens
+            for(let i=70; i>=49; i--) dadosDesafio.push({ valor: i, tipo: 'dificil', pago: false });
+            
+            // Fase 5: Retorno (48 a 31) - 18 itens
+            for(let i=48; i>=31; i--) dadosDesafio.push({ valor: i, tipo: 'medio', pago: false });
+            
+            // Fase 6: Reta Final (30 a 2) - 29 itens (Totalizando 140 dias)
+            for(let i=30; i>=2; i--) dadosDesafio.push({ valor: i, tipo: 'facil', pago: false });
         }
 
         function salvarProgresso() {
@@ -617,25 +595,29 @@
             let diasPagos = 0;
             const totalDias = 140;
 
-            const grupos = [
-                { id: 'facil', titulo: '🟢 Nível Iniciante (R$ 1-30)' },
-                { id: 'medio', titulo: '🔵 Nível Intermediário (R$ 31-48)' },
-                { id: 'dificil', titulo: '🟣 Nível Hard (R$ 49-71)' }
+            // Organização visual por Etapas da Jornada
+            const etapas = [
+                { titulo: '🟢 1ª Etapa: Aquecimento (R$ 1-30)', range: [0, 30] },
+                { titulo: '🔵 2ª Etapa: A Escalada (R$ 31-48)', range: [30, 48] },
+                { titulo: '🟣 3ª Etapa: O Pico do Desafio (R$ 49-71)', range: [48, 71] }, // Ida do difícil
+                { titulo: '🟣 4ª Etapa: Descendo a Montanha (R$ 70-49)', range: [71, 93] }, // Volta do difícil
+                { titulo: '🔵 5ª Etapa: O Retorno (R$ 48-31)', range: [93, 111] }, // Volta do médio
+                { titulo: '🟢 6ª Etapa: Reta Final (R$ 30-2)', range: [111, 140] } // Volta do fácil
             ];
 
-            grupos.forEach(grupo => {
+            etapas.forEach(etapa => {
                 const titulo = document.createElement('div');
                 titulo.className = 'section-title';
-                titulo.textContent = grupo.titulo;
+                titulo.textContent = etapa.titulo;
                 grid.appendChild(titulo);
 
-                const itensComIndex = dadosDesafio
-                    .map((item, index) => ({ ...item, originalIndex: index }))
-                    .filter(item => item.tipo === grupo.id);
-                    // REMOVIDO: .sort((a, b) => a.valor - b.valor); 
-                    // Isso garante que apareça na ordem de criação (sequencial)
+                // Pega os itens correspondentes a essa etapa baseada no índice
+                const itensDaEtapa = dadosDesafio.slice(etapa.range[0], etapa.range[1]);
 
-                itensComIndex.forEach(item => {
+                // Precisamos saber o índice original real para salvar no banco
+                itensDaEtapa.forEach((item, indexLocal) => {
+                    const indexReal = etapa.range[0] + indexLocal;
+                    
                     const card = document.createElement('div');
                     card.className = `card ${item.tipo} ${item.pago ? 'pago' : ''}`;
                     card.textContent = `R$ ${item.valor}`;
@@ -646,7 +628,7 @@
                     }
 
                     card.onclick = () => {
-                        dadosDesafio[item.originalIndex].pago = !dadosDesafio[item.originalIndex].pago;
+                        dadosDesafio[indexReal].pago = !dadosDesafio[indexReal].pago;
                         salvarProgresso();
                     };
 
